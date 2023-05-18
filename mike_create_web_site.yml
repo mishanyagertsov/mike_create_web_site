@@ -1,0 +1,31 @@
+---
+- name: Create Static Website
+  hosts: all
+  become: true
+  tasks:
+  - name: Install Apache
+    yum:
+      name: httpd
+      state: present
+  - name: Start Apache and enable on boot
+    systemd:
+      name: httpd
+      state: started
+      enabled: yes
+  - name: Install Unzip
+    yum:
+      name: unzip
+      state: present
+  - name: Start service and enable
+    get_url:
+      url: "https://www.free-css.com/assets/files/free-css-templates/download/page291/atlas.zip"
+      dest: "/var/www/html/atlas.zip"
+  - name: Unzip atlas.zip
+    unarchive:
+      src: /var/www/html/atlas.zip
+      dest: /var/www/html/
+      remote_src: true
+      extra_opts: '-o'
+      
+  - name: Move files
+    shell: "mv /var/www/html/Atlas/* /var/www/html/"
